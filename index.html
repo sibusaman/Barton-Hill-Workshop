@@ -199,7 +199,86 @@ Pin 14 to Arduino pin A0
         </section>
 
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    <section>
+      <h2>Final v1</h2>
+      <p>
+        <pre>
+#include &lt;Keypad.h&gt;
+
+char num[10];
+//char command[30];
+int i=0;
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+byte rowPins[ROWS] = {2,3,4,5}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {6,7,8,9}; //connect to the column pinouts of the keypad
+
+Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+
+void setup(){
+  Serial.begin(9600);
+}
+
+void loop(){
+  char key = keypad.getKey();
+  if (i == 10)
+  {
+    i=0;
+  }
+
+  if (key != NO_KEY)
+  {
+    if (key &gt; 47 && key &lt; 58)
+    {
+      num[i] = key;
+      Serial.println(num);
+      i++;
+    }
+    else
+    {
+      switch (key)
+      {
+        case 'D':
+          if (!i)
+          {
+            Serial.print("ATD");
+            Serial.print(num);
+            Serial.print(";\r\n");
+            delay(15000);
+            Serial.print("ATH\r\n");
+            i=0;
+            memset(num, 0, sizeof(num));
+          }
+          else
+          {
+            Serial.println("check num!");
+          }
+          break;
+
+        case 'A':
+          Serial.print("ATA\r\n");
+          break;
+
+        case 'C':
+          i=0;
+          memset(num, 0, sizeof(num));
+          Serial.print("ATH\r\n");
+          Serial.println("xxxxxxxxxx");
+          break;
+
+      }
+    }
+  }
+}
+        </pre>
+      </p>
+    </section>
 
 </body>
 
